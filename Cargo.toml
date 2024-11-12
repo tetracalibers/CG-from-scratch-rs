@@ -1,6 +1,10 @@
 [package]
-name = "computer-graphics-from-scratch-rs"
+name    = "computer-graphics-from-scratch-rs"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+bytemuck   = "1.19.0"
+env_logger = "0.11.5"
+pixels     = "0.14.0"
+winit      = "0.30.5"
