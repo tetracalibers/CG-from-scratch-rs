@@ -70,7 +70,8 @@ fn main() -> Result<()> {
     VIEWPORT_SIZE,
     PROJECTION_PLANE_Z,
   );
-  let scene = Scene::new(SPHERES, BACKGROUND_COLOR).with_lights(LIGHTS);
+  let scene =
+    Scene::new(SPHERES, BACKGROUND_COLOR).with_lights(LIGHTS).with_shadow();
 
   let cw = CANVAS_WIDTH as i32;
   let ch = CANVAS_HEIGHT as i32;
