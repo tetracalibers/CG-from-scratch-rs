@@ -85,13 +85,13 @@ impl<'a> Scene<'a> {
   /// * `O` - origin
   /// * `D` - direction
   #[allow(non_snake_case)]
-  pub fn trace_ray(
+  fn closest_intersection(
     &self,
     O: Vector3<f32>,
     D: Vector3<f32>,
     min_t: f32,
     max_t: f32,
-  ) -> Color {
+  ) -> Option<(&Sphere, f32)> {
     let mut closest_t = f32::INFINITY;
     let mut closest_sphere: Option<&Sphere> = None;
 
@@ -109,7 +109,21 @@ impl<'a> Scene<'a> {
       }
     }
 
-    if let Some(sphere) = closest_sphere {
+    closest_sphere.map(|sphere| (sphere, closest_t))
+  }
+
+  /// * `O` - origin
+  /// * `D` - direction
+  #[allow(non_snake_case)]
+  pub fn trace_ray(
+    &self,
+    O: Vector3<f32>,
+    D: Vector3<f32>,
+    min_t: f32,
+    max_t: f32,
+  ) -> Color {
+    let intersection = self.closest_intersection(O, D, min_t, max_t);
+    if let Some((sphere, closest_t)) = intersection {
       if self.lights.is_empty() {
         return sphere.color;
       }
