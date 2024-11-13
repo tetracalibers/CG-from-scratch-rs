@@ -7,3 +7,7 @@ edition = "2021"
 anyhow = "1.0.93"
 cgmath = "0.18.0"
 png    = "0.17.14"
+
+[[example]]
+name = "raytracer_01_basic_raytracing"
+path = "examples/raytracer/basic_raytracing.rs"
