@@ -6,6 +6,7 @@ pub struct Scene<'a> {
   pub spheres: &'a [Sphere],
   pub background_color: Color,
   pub lights: &'a [Light],
+  pub shadow: bool,
 }
 
 impl<'a> Scene<'a> {
@@ -14,12 +15,17 @@ impl<'a> Scene<'a> {
       spheres,
       background_color,
       lights: &[],
+      shadow: false,
     }
   }
 
   pub fn with_lights(mut self, lights: &'a [Light]) -> Self {
     self.lights = lights;
+    self
+  }
 
+  pub fn with_shadow(mut self) -> Self {
+    self.shadow = true;
     self
   }
 
@@ -37,44 +43,49 @@ impl<'a> Scene<'a> {
     let mut intensity = 0.0;
 
     for light in self.lights {
-      let mut L: Option<Vector3<f32>> = None;
-
-      match light.ty {
+      let (L, t_max) = match light.ty {
         LightType::Ambient => {
           intensity += light.intensity;
+          continue;
         }
-        LightType::Point(position) => {
-          L = Some(position - P);
-        }
-        LightType::Directional(direction) => {
-          L = Some(direction);
+        LightType::Point(position) => (position - P, 1.),
+        LightType::Directional(direction) => (direction, f32::INFINITY),
+      };
+
+      //
+      // Shadow check
+      //
+
+      if self.shadow {
+        let blocker = self.closest_intersection(P, L, 0.001, t_max);
+
+        if blocker.is_some() {
+          continue;
         }
       }
 
-      if let Some(L) = L {
-        //
-        // Diffuse reflection
-        //
+      //
+      // Diffuse reflection
+      //
 
-        let n_dot_l = N.dot(L);
+      let n_dot_l = N.dot(L);
 
-        if n_dot_l > 0.0 {
-          intensity +=
-            light.intensity * n_dot_l / (N.magnitude() * L.magnitude());
-        }
+      if n_dot_l > 0.0 {
+        intensity +=
+          light.intensity * n_dot_l / (N.magnitude() * L.magnitude());
+      }
 
-        //
-        // Specular reflection
-        //
+      //
+      // Specular reflection
+      //
 
-        if let Some(specular) = specular {
-          let R = 2. * N * N.dot(L) - L;
-          let r_dot_v = R.dot(V);
+      if let Some(specular) = specular {
+        let R = 2. * N * N.dot(L) - L;
+        let r_dot_v = R.dot(V);
 
-          if r_dot_v > 0.0 {
-            intensity += light.intensity
-              * (r_dot_v / (R.magnitude() * V.magnitude())).powf(specular);
-          }
+        if r_dot_v > 0.0 {
+          intensity += light.intensity
+            * (r_dot_v / (R.magnitude() * V.magnitude())).powf(specular);
         }
       }
     }
@@ -85,13 +96,13 @@ impl<'a> Scene<'a> {
   /// * `O` - origin
   /// * `D` - direction
   #[allow(non_snake_case)]
-  pub fn trace_ray(
+  fn closest_intersection(
     &self,
     O: Vector3<f32>,
     D: Vector3<f32>,
     min_t: f32,
     max_t: f32,
-  ) -> Color {
+  ) -> Option<(&Sphere, f32)> {
     let mut closest_t = f32::INFINITY;
     let mut closest_sphere: Option<&Sphere> = None;
 
@@ -109,7 +120,21 @@ impl<'a> Scene<'a> {
       }
     }
 
-    if let Some(sphere) = closest_sphere {
+    closest_sphere.map(|sphere| (sphere, closest_t))
+  }
+
+  /// * `O` - origin
+  /// * `D` - direction
+  #[allow(non_snake_case)]
+  pub fn trace_ray(
+    &self,
+    O: Vector3<f32>,
+    D: Vector3<f32>,
+    min_t: f32,
+    max_t: f32,
+  ) -> Color {
+    let intersection = self.closest_intersection(O, D, min_t, max_t);
+    if let Some((sphere, closest_t)) = intersection {
       if self.lights.is_empty() {
         return sphere.color;
       }
