@@ -11,3 +11,7 @@ png    = "0.17.14"
 [[example]]
 name = "raytracer_01_basic_raytracing"
 path = "examples/raytracer/basic_raytracing.rs"
+
+[[example]]
+name = "raytracer_02_diffuse_reflection"
+path = "examples/raytracer/diffuse_reflection.rs"
