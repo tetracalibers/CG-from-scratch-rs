@@ -59,7 +59,7 @@ impl<'a> Scene<'a> {
 
   /// * `O` - origin
   /// * `D` - direction
-  #[allow(non_snake_case, unused_assignments)]
+  #[allow(non_snake_case)]
   pub fn trace_ray(
     &self,
     O: Vector3<f32>,
