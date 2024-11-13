@@ -25,8 +25,15 @@ impl<'a> Scene<'a> {
 
   /// * `P` - point
   /// * `N` - normal
+  /// * `V` - view
   #[allow(non_snake_case, unused_assignments)]
-  fn compute_lighting(&self, P: Vector3<f32>, N: Vector3<f32>) -> f32 {
+  fn compute_lighting(
+    &self,
+    P: Vector3<f32>,
+    N: Vector3<f32>,
+    V: Vector3<f32>,
+    specular: Option<f32>,
+  ) -> f32 {
     let mut intensity = 0.0;
 
     for light in self.lights {
@@ -45,11 +52,29 @@ impl<'a> Scene<'a> {
       }
 
       if let Some(L) = L {
+        //
+        // Diffuse reflection
+        //
+
         let n_dot_l = N.dot(L);
 
         if n_dot_l > 0.0 {
           intensity +=
             light.intensity * n_dot_l / (N.magnitude() * L.magnitude());
+        }
+
+        //
+        // Specular reflection
+        //
+
+        if let Some(specular) = specular {
+          let R = 2. * N * N.dot(L) - L;
+          let r_dot_v = R.dot(V);
+
+          if r_dot_v > 0.0 {
+            intensity += light.intensity
+              * (r_dot_v / (R.magnitude() * V.magnitude())).powf(specular);
+          }
         }
       }
     }
@@ -95,7 +120,7 @@ impl<'a> Scene<'a> {
       let mut color =
         Vector3::new(sphere.color[0], sphere.color[1], sphere.color[2]);
 
-      let intensity = self.compute_lighting(P, N);
+      let intensity = self.compute_lighting(P, N, -D, sphere.specular);
 
       color = color * intensity;
 

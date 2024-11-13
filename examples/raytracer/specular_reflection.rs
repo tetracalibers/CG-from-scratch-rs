@@ -9,7 +9,7 @@ use computer_graphics_from_scratch_rs::primitive::Sphere;
 use computer_graphics_from_scratch_rs::primitive::{Light, LightType};
 use computer_graphics_from_scratch_rs::raytracer::Scene;
 
-const EXPORT_PATH: &str = "export/raytracer_02_diffuse_reflection.png";
+const EXPORT_PATH: &str = "export/raytracer_03_specular_reflection.png";
 
 const CANVAS_WIDTH: u32 = 1200;
 const CANVAS_HEIGHT: u32 = 1200;
@@ -26,25 +26,25 @@ const SPHERES: &[Sphere] = &[
     center: Vector3::new(0., -1., 3.),
     radius: 1.,
     color: [255., 0., 0., 255.],
-    specular: None,
+    specular: Some(500.),
   },
   Sphere {
     center: Vector3::new(-2., 0., 4.),
     radius: 1.,
     color: [0., 255., 0., 255.],
-    specular: None,
+    specular: Some(10.),
   },
   Sphere {
     center: Vector3::new(2., 0., 4.),
     radius: 1.,
     color: [0., 0., 255., 255.],
-    specular: None,
+    specular: Some(500.),
   },
   Sphere {
     center: Vector3::new(0., -5001., 0.),
     radius: 5000.,
     color: [255., 255., 0., 255.],
-    specular: None,
+    specular: Some(1000.),
   },
 ];
 
