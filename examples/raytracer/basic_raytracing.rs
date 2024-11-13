@@ -17,23 +17,23 @@ const PROJECTION_PLANE_Z: f32 = 1.;
 
 const CAMERA_POSITION: Vector3<f32> = Vector3::new(0., 0., 0.);
 
-const BACKGROUND_COLOR: Color = [255, 255, 255, 255];
+const BACKGROUND_COLOR: Color = [255., 255., 255., 255.];
 
 const SPHERES: &[Sphere] = &[
   Sphere {
     center: Vector3::new(0., -1., 3.),
     radius: 1.,
-    color: [255, 0, 0, 255],
+    color: [255., 0., 0., 255.],
   },
   Sphere {
     center: Vector3::new(-2., 0., 4.),
     radius: 1.,
-    color: [0, 255, 0, 255],
+    color: [0., 255., 0., 255.],
   },
   Sphere {
     center: Vector3::new(2., 0., 4.),
     radius: 1.,
-    color: [0, 0, 255, 255],
+    color: [0., 0., 255., 255.],
   },
 ];
 

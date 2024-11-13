@@ -1,6 +1,6 @@
 use cgmath::{InnerSpace, Vector3};
 
-use crate::primitive::{scale_color, Color, Light, LightType, Sphere};
+use crate::primitive::{Color, Light, LightType, Sphere};
 
 pub struct Scene<'a> {
   pub spheres: &'a [Sphere],
@@ -92,7 +92,14 @@ impl<'a> Scene<'a> {
       let P = O + D * closest_t;
       let N = (P - sphere.center).normalize();
 
-      return scale_color(sphere.color, self.compute_lighting(P, N));
+      let mut color =
+        Vector3::new(sphere.color[0], sphere.color[1], sphere.color[2]);
+
+      let intensity = self.compute_lighting(P, N);
+
+      color = color * intensity;
+
+      return [color.x, color.y, color.z, 255.];
     }
 
     self.background_color

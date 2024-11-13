@@ -1,15 +1,6 @@
 use cgmath::Vector3;
 
-pub type Color = [i32; 4];
-
-pub fn scale_color(color: Color, intensity: f32) -> Color {
-  // Scale color by intensity
-  let mut color = color.map(|c| (c as f32 * intensity) as i32);
-  // Set alpha to 255
-  color.last_mut().map(|a| *a = 255);
-
-  color
-}
+pub type Color = [f32; 4];
 
 #[derive(Debug)]
 pub struct Sphere {
