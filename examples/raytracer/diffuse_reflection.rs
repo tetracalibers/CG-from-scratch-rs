@@ -2,7 +2,9 @@ use anyhow::Result;
 use cgmath::Vector3;
 use computer_graphics_from_scratch_rs::canvas::Canvas;
 use computer_graphics_from_scratch_rs::export::export_png;
-use computer_graphics_from_scratch_rs::primitive::{Color, Sphere};
+use computer_graphics_from_scratch_rs::primitive::Color;
+use computer_graphics_from_scratch_rs::primitive::Sphere;
+use computer_graphics_from_scratch_rs::primitive::{Light, LightType};
 use computer_graphics_from_scratch_rs::raytracer::Scene;
 
 const EXPORT_PATH: &str = "export/raytracer_02_diffuse_reflection.png";
@@ -37,6 +39,24 @@ const SPHERES: &[Sphere] = &[
     center: Vector3::new(0., -5001., 0.),
     radius: 5000.,
     color: [255, 255, 0, 255],
+  },
+];
+
+const LIGHTS: &[Light] = &[
+  Light {
+    light_type: LightType::Ambient,
+    intensity: 0.2,
+    position: None,
+  },
+  Light {
+    light_type: LightType::Point,
+    intensity: 0.6,
+    position: Some(Vector3::new(2., 1., 0.)),
+  },
+  Light {
+    light_type: LightType::Directional,
+    intensity: 0.2,
+    position: Some(Vector3::new(1., 4., 4.)),
   },
 ];
 
