@@ -7,6 +7,7 @@ pub struct Sphere {
   pub center: Vector3<f32>,
   pub radius: f32,
   pub color: Color,
+  pub specular: Option<f32>,
 }
 
 pub type Position = Vector3<f32>;
