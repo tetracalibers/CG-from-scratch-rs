@@ -7,7 +7,7 @@ use computer_graphics_from_scratch_rs::{
   raytracer::Scene,
 };
 
-const EXPORT_PATH: &str = "export/raytracer_01_bacic_reytracing.png";
+const EXPORT_PATH: &str = "export/raytracer_01_basic_raytracing.png";
 
 const CANVAS_WIDTH: u32 = 1200;
 const CANVAS_HEIGHT: u32 = 1200;
