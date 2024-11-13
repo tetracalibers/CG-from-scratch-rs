@@ -5,5 +5,5 @@ Implementing the [computer-graphics-from-scratch](https://github.com/ggambetta/c
 ### Commands
 
 ```bash
-cargo run --example raytracer_01_bacic_raytracing
+cargo run --example raytracer_01_basic_raytracing
 ```

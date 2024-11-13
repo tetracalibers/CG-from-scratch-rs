@@ -9,5 +9,5 @@ cgmath = "0.18.0"
 png    = "0.17.14"
 
 [[example]]
-name = "raytracer_01_bacic_raytracing"
+name = "raytracer_01_basic_raytracing"
 path = "examples/raytracer/basic_raytracing.rs"
