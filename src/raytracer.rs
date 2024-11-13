@@ -1,10 +1,11 @@
-use cgmath::{ElementWise, InnerSpace, Vector3};
+use cgmath::{InnerSpace, Vector3};
 
-use crate::primitive::{Color, Sphere};
+use crate::primitive::{Color, Light, LightType, Sphere};
 
 pub struct Scene<'a> {
   pub spheres: &'a [Sphere],
   pub background_color: Color,
+  pub lights: &'a [Light],
 }
 
 impl<'a> Scene<'a> {
@@ -12,13 +13,57 @@ impl<'a> Scene<'a> {
     Self {
       spheres,
       background_color,
+      lights: &[],
     }
   }
 
+  pub fn with_lights(mut self, lights: &'a [Light]) -> Self {
+    self.lights = lights;
+
+    self
+  }
+
+  /// * `P` - point
+  /// * `N` - normal
+  #[allow(non_snake_case, unused_assignments)]
+  fn compute_lighting(&self, P: Vector3<f32>, N: Vector3<f32>) -> f32 {
+    let mut intensity = 0.0;
+
+    for light in self.lights {
+      let mut L: Option<Vector3<f32>> = None;
+
+      match light.ty {
+        LightType::Ambient => {
+          intensity += light.intensity;
+        }
+        LightType::Point(position) => {
+          L = Some(position - P);
+        }
+        LightType::Directional(direction) => {
+          L = Some(direction);
+        }
+      }
+
+      if let Some(L) = L {
+        let n_dot_l = N.dot(L);
+
+        if n_dot_l > 0.0 {
+          intensity +=
+            light.intensity * n_dot_l / (N.magnitude() * L.magnitude());
+        }
+      }
+    }
+
+    intensity
+  }
+
+  /// * `O` - origin
+  /// * `D` - direction
+  #[allow(non_snake_case)]
   pub fn trace_ray(
     &self,
-    origin: Vector3<f32>,
-    direction: Vector3<f32>,
+    O: Vector3<f32>,
+    D: Vector3<f32>,
     min_t: f32,
     max_t: f32,
   ) -> Color {
@@ -26,7 +71,7 @@ impl<'a> Scene<'a> {
     let mut closest_sphere: Option<&Sphere> = None;
 
     for sphere in self.spheres {
-      let (t1, t2) = intersect_ray_sphere(origin, direction, sphere);
+      let (t1, t2) = intersect_ray_sphere(O, D, sphere);
 
       if t1 < closest_t && min_t < t1 && t1 < max_t {
         closest_t = t1;
@@ -40,23 +85,41 @@ impl<'a> Scene<'a> {
     }
 
     if let Some(sphere) = closest_sphere {
-      return sphere.color;
+      if self.lights.is_empty() {
+        return sphere.color;
+      }
+
+      let P = O + D * closest_t;
+      let N = (P - sphere.center).normalize();
+
+      let mut color =
+        Vector3::new(sphere.color[0], sphere.color[1], sphere.color[2]);
+
+      let intensity = self.compute_lighting(P, N);
+
+      color = color * intensity;
+
+      return [color.x, color.y, color.z, 255.];
     }
 
     self.background_color
   }
 }
 
+/// * `O` - origin
+/// * `D` - direction
+#[allow(non_snake_case)]
 fn intersect_ray_sphere(
-  origin: Vector3<f32>,
-  direction: Vector3<f32>,
+  O: Vector3<f32>,
+  D: Vector3<f32>,
   sphere: &Sphere,
 ) -> (f32, f32) {
-  let oc = origin.sub_element_wise(sphere.center);
+  let r = sphere.radius;
+  let CO = O - sphere.center;
 
-  let k1 = direction.dot(direction);
-  let k2 = 2. * oc.dot(direction);
-  let k3 = (oc.dot(oc) - sphere.radius * sphere.radius) as f32;
+  let k1 = D.dot(D);
+  let k2 = 2. * CO.dot(D);
+  let k3 = CO.dot(CO) - r * r;
 
   let discriminant = k2 * k2 - 4. * k1 * k3;
 

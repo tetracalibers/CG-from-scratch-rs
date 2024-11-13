@@ -1,13 +1,15 @@
 use anyhow::Result;
 use cgmath::Vector3;
-use computer_graphics_from_scratch_rs::{
-  canvas::Canvas,
-  export::export_png,
-  primitive::{Color, Sphere},
-  raytracer::Scene,
-};
+use computer_graphics_from_scratch_rs::canvas::Canvas;
+use computer_graphics_from_scratch_rs::export::export_png;
+use computer_graphics_from_scratch_rs::primitive::Color;
+use computer_graphics_from_scratch_rs::primitive::Direction;
+use computer_graphics_from_scratch_rs::primitive::Position;
+use computer_graphics_from_scratch_rs::primitive::Sphere;
+use computer_graphics_from_scratch_rs::primitive::{Light, LightType};
+use computer_graphics_from_scratch_rs::raytracer::Scene;
 
-const EXPORT_PATH: &str = "export/raytracer_01_basic_raytracing.png";
+const EXPORT_PATH: &str = "export/raytracer_02_diffuse_reflection.png";
 
 const CANVAS_WIDTH: u32 = 1200;
 const CANVAS_HEIGHT: u32 = 1200;
@@ -35,6 +37,26 @@ const SPHERES: &[Sphere] = &[
     radius: 1.,
     color: [0., 0., 255., 255.],
   },
+  Sphere {
+    center: Vector3::new(0., -5001., 0.),
+    radius: 5000.,
+    color: [255., 255., 0., 255.],
+  },
+];
+
+const LIGHTS: &[Light] = &[
+  Light {
+    ty: LightType::Ambient,
+    intensity: 0.2,
+  },
+  Light {
+    ty: LightType::Point(Position::new(2., 1., 0.)),
+    intensity: 0.6,
+  },
+  Light {
+    ty: LightType::Directional(Direction::new(1., 4., 4.)),
+    intensity: 0.2,
+  },
 ];
 
 fn main() -> Result<()> {
@@ -44,7 +66,7 @@ fn main() -> Result<()> {
     VIEWPORT_SIZE,
     PROJECTION_PLANE_Z,
   );
-  let scene = Scene::new(SPHERES, BACKGROUND_COLOR);
+  let scene = Scene::new(SPHERES, BACKGROUND_COLOR).with_lights(LIGHTS);
 
   let cw = CANVAS_WIDTH as i32;
   let ch = CANVAS_HEIGHT as i32;
