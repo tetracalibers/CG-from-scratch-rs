@@ -3,6 +3,8 @@ use cgmath::Vector3;
 use computer_graphics_from_scratch_rs::canvas::Canvas;
 use computer_graphics_from_scratch_rs::export::export_png;
 use computer_graphics_from_scratch_rs::primitive::Color;
+use computer_graphics_from_scratch_rs::primitive::Direction;
+use computer_graphics_from_scratch_rs::primitive::Position;
 use computer_graphics_from_scratch_rs::primitive::Sphere;
 use computer_graphics_from_scratch_rs::primitive::{Light, LightType};
 use computer_graphics_from_scratch_rs::raytracer::Scene;
@@ -44,19 +46,16 @@ const SPHERES: &[Sphere] = &[
 
 const LIGHTS: &[Light] = &[
   Light {
-    light_type: LightType::Ambient,
+    ty: LightType::Ambient,
     intensity: 0.2,
-    position: None,
   },
   Light {
-    light_type: LightType::Point,
+    ty: LightType::Point(Position::new(2., 1., 0.)),
     intensity: 0.6,
-    position: Some(Vector3::new(2., 1., 0.)),
   },
   Light {
-    light_type: LightType::Directional,
+    ty: LightType::Directional(Direction::new(1., 4., 4.)),
     intensity: 0.2,
-    position: Some(Vector3::new(1., 4., 4.)),
   },
 ];
 
@@ -67,7 +66,7 @@ fn main() -> Result<()> {
     VIEWPORT_SIZE,
     PROJECTION_PLANE_Z,
   );
-  let scene = Scene::new(SPHERES, BACKGROUND_COLOR);
+  let scene = Scene::new(SPHERES, BACKGROUND_COLOR).with_lights(LIGHTS);
 
   let cw = CANVAS_WIDTH as i32;
   let ch = CANVAS_HEIGHT as i32;
