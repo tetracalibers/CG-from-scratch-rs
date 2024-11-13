@@ -85,6 +85,10 @@ impl<'a> Scene<'a> {
     }
 
     if let Some(sphere) = closest_sphere {
+      if self.lights.is_empty() {
+        return sphere.color;
+      }
+
       let P = O + D * closest_t;
       let N = (P - sphere.center).normalize();
 
