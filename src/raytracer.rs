@@ -1,4 +1,4 @@
-use cgmath::{ElementWise, InnerSpace, Vector3};
+use cgmath::{InnerSpace, Vector3};
 
 use crate::primitive::{scale_color, Color, Light, LightType, Sphere};
 
@@ -95,16 +95,20 @@ impl<'a> Scene<'a> {
   }
 }
 
+/// * `O` - origin
+/// * `D` - direction
+#[allow(non_snake_case)]
 fn intersect_ray_sphere(
-  origin: Vector3<f32>,
-  direction: Vector3<f32>,
+  O: Vector3<f32>,
+  D: Vector3<f32>,
   sphere: &Sphere,
 ) -> (f32, f32) {
-  let oc = origin.sub_element_wise(sphere.center);
+  let r = sphere.radius;
+  let CO = O - sphere.center;
 
-  let k1 = direction.dot(direction);
-  let k2 = 2. * oc.dot(direction);
-  let k3 = (oc.dot(oc) - sphere.radius * sphere.radius) as f32;
+  let k1 = D.dot(D);
+  let k2 = 2. * CO.dot(D);
+  let k3 = CO.dot(CO) - r * r;
 
   let discriminant = k2 * k2 - 4. * k1 * k3;
 
