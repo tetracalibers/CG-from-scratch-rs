@@ -19,7 +19,7 @@ const PROJECTION_PLANE_Z: f32 = 1.;
 
 const CAMERA_POSITION: Vector3<f32> = Vector3::new(0., 0., 0.);
 
-const BACKGROUND_COLOR: Color = [255., 255., 255., 255.];
+const BACKGROUND_COLOR: Color = [0., 0., 0., 255.];
 
 const SPHERES: &[Sphere] = &[
   Sphere {
@@ -67,6 +67,8 @@ const LIGHTS: &[Light] = &[
   },
 ];
 
+const RECURSION_DEPTH: i32 = 3;
+
 fn main() -> Result<()> {
   let mut canvas = Canvas::new(
     CANVAS_WIDTH,
@@ -83,8 +85,14 @@ fn main() -> Result<()> {
   for x in -cw / 2..cw / 2 {
     for y in -ch / 2..ch / 2 {
       let direction = canvas.canvas_to_viewport(x as f32, y as f32);
-      let color =
-        scene.trace_ray(CAMERA_POSITION, direction, 1., f32::INFINITY);
+
+      let color = scene.trace_ray(
+        CAMERA_POSITION,
+        direction,
+        1.,
+        f32::INFINITY,
+        Some(RECURSION_DEPTH),
+      );
 
       canvas.put_pixel(x as f32, y as f32, color);
     }
