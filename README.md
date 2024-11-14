@@ -23,3 +23,7 @@ cargo run --example raytracer_04_shadows
 ```bash
 cargo run --example raytracer_05_reflections
 ```
+
+```bash
+cargo run --example raytracer_06_camera_position
+```
