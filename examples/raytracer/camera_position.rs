@@ -1,4 +1,7 @@
 use anyhow::Result;
+use cgmath::Basis3;
+use cgmath::Matrix3;
+use cgmath::Rotation3;
 use cgmath::Vector3;
 use computer_graphics_from_scratch_rs::canvas::Canvas;
 use computer_graphics_from_scratch_rs::export::export_png;
@@ -18,6 +21,7 @@ const VIEWPORT_SIZE: f32 = 1.;
 const PROJECTION_PLANE_Z: f32 = 1.;
 
 const CAMERA_POSITION: Vector3<f32> = Vector3::new(3., 0., 1.);
+const CAMERA_ROTATION_Y: f32 = -45.;
 
 const BACKGROUND_COLOR: Color = [0., 0., 0., 255.];
 
@@ -82,9 +86,14 @@ fn main() -> Result<()> {
   let cw = CANVAS_WIDTH as i32;
   let ch = CANVAS_HEIGHT as i32;
 
+  let camera_rotation: Basis3<f32> =
+    Rotation3::from_angle_y(cgmath::Deg(CAMERA_ROTATION_Y));
+  let camera_rotation_matrix: Matrix3<f32> = camera_rotation.into();
+
   for x in -cw / 2..cw / 2 {
     for y in -ch / 2..ch / 2 {
-      let direction = canvas.canvas_to_viewport(x as f32, y as f32);
+      let direction =
+        camera_rotation_matrix * canvas.canvas_to_viewport(x as f32, y as f32);
 
       let color = scene.trace_ray(
         CAMERA_POSITION,
