@@ -19,3 +19,7 @@ cargo run --example raytracer_03_specular_reflection
 ```bash
 cargo run --example raytracer_04_shadows
 ```
+
+```bash
+cargo run --example raytracer_05_reflections
+```

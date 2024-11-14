@@ -23,3 +23,7 @@ path = "examples/raytracer/specular_reflection.rs"
 [[example]]
 name = "raytracer_04_shadows"
 path = "examples/raytracer/shadows.rs"
+
+[[example]]
+name = "raytracer_05_reflections"
+path = "examples/raytracer/reflections.rs"
