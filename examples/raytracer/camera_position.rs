@@ -17,7 +17,7 @@ const CANVAS_HEIGHT: u32 = 1200;
 const VIEWPORT_SIZE: f32 = 1.;
 const PROJECTION_PLANE_Z: f32 = 1.;
 
-const CAMERA_POSITION: Vector3<f32> = Vector3::new(0., 0., 0.);
+const CAMERA_POSITION: Vector3<f32> = Vector3::new(3., 0., 1.);
 
 const BACKGROUND_COLOR: Color = [0., 0., 0., 255.];
 
