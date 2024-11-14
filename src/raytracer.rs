@@ -80,7 +80,7 @@ impl<'a> Scene<'a> {
       //
 
       if let Some(specular) = specular {
-        let R = 2. * N * N.dot(L) - L;
+        let R = self.reflect_ray(L, N);
         let r_dot_v = R.dot(V);
 
         if r_dot_v > 0.0 {
@@ -91,6 +91,13 @@ impl<'a> Scene<'a> {
     }
 
     intensity
+  }
+
+  /// * `R` - ray
+  /// * `N` - normal
+  #[allow(non_snake_case)]
+  fn reflect_ray(&self, R: Vector3<f32>, N: Vector3<f32>) -> Vector3<f32> {
+    2. * N * N.dot(R) - R
   }
 
   /// * `O` - origin
@@ -132,6 +139,7 @@ impl<'a> Scene<'a> {
     D: Vector3<f32>,
     min_t: f32,
     max_t: f32,
+    recursion_depth: Option<i32>,
   ) -> Color {
     let intersection = self.closest_intersection(O, D, min_t, max_t);
     if let Some((sphere, closest_t)) = intersection {
@@ -142,14 +150,31 @@ impl<'a> Scene<'a> {
       let P = O + D * closest_t;
       let N = (P - sphere.center).normalize();
 
-      let mut color =
+      let mut local_color =
         Vector3::new(sphere.color[0], sphere.color[1], sphere.color[2]);
 
       let intensity = self.compute_lighting(P, N, -D, sphere.specular);
+      local_color = local_color * intensity;
 
-      color = color * intensity;
+      let recursion_depth = recursion_depth.unwrap_or(0);
+      let r = sphere.reflective.unwrap_or(0.);
 
-      return [color.x, color.y, color.z, 255.];
+      if recursion_depth > 0 && r > 0. {
+        let R = self.reflect_ray(-D, N);
+
+        let reflected_color =
+          self.trace_ray(P, R, 0.1, f32::INFINITY, Some(recursion_depth - 1));
+
+        let reflected_color = Vector3::new(
+          reflected_color[0],
+          reflected_color[1],
+          reflected_color[2],
+        );
+
+        local_color = local_color * (1. - r) + reflected_color * r;
+      }
+
+      return [local_color.x, local_color.y, local_color.z, 255.];
     }
 
     self.background_color

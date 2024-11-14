@@ -9,7 +9,7 @@ use computer_graphics_from_scratch_rs::primitive::Sphere;
 use computer_graphics_from_scratch_rs::primitive::{Light, LightType};
 use computer_graphics_from_scratch_rs::raytracer::Scene;
 
-const EXPORT_PATH: &str = "export/raytracer_04_shadows.png";
+const EXPORT_PATH: &str = "export/raytracer_05_reflections.png";
 
 const CANVAS_WIDTH: u32 = 1200;
 const CANVAS_HEIGHT: u32 = 1200;
@@ -19,7 +19,7 @@ const PROJECTION_PLANE_Z: f32 = 1.;
 
 const CAMERA_POSITION: Vector3<f32> = Vector3::new(0., 0., 0.);
 
-const BACKGROUND_COLOR: Color = [255., 255., 255., 255.];
+const BACKGROUND_COLOR: Color = [0., 0., 0., 255.];
 
 const SPHERES: &[Sphere] = &[
   Sphere {
@@ -27,28 +27,28 @@ const SPHERES: &[Sphere] = &[
     radius: 1.,
     color: [255., 0., 0., 255.],
     specular: Some(500.),
-    reflective: None,
+    reflective: Some(0.2),
   },
   Sphere {
     center: Vector3::new(-2., 0., 4.),
     radius: 1.,
     color: [0., 255., 0., 255.],
     specular: Some(10.),
-    reflective: None,
+    reflective: Some(0.4),
   },
   Sphere {
     center: Vector3::new(2., 0., 4.),
     radius: 1.,
     color: [0., 0., 255., 255.],
     specular: Some(500.),
-    reflective: None,
+    reflective: Some(0.3),
   },
   Sphere {
     center: Vector3::new(0., -5001., 0.),
     radius: 5000.,
     color: [255., 255., 0., 255.],
     specular: Some(1000.),
-    reflective: None,
+    reflective: Some(0.5),
   },
 ];
 
@@ -67,6 +67,8 @@ const LIGHTS: &[Light] = &[
   },
 ];
 
+const RECURSION_DEPTH: i32 = 3;
+
 fn main() -> Result<()> {
   let mut canvas = Canvas::new(
     CANVAS_WIDTH,
@@ -83,8 +85,14 @@ fn main() -> Result<()> {
   for x in -cw / 2..cw / 2 {
     for y in -ch / 2..ch / 2 {
       let direction = canvas.canvas_to_viewport(x as f32, y as f32);
-      let color =
-        scene.trace_ray(CAMERA_POSITION, direction, 1., f32::INFINITY, None);
+
+      let color = scene.trace_ray(
+        CAMERA_POSITION,
+        direction,
+        1.,
+        f32::INFINITY,
+        Some(RECURSION_DEPTH),
+      );
 
       canvas.put_pixel(x as f32, y as f32, color);
     }

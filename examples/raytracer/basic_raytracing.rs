@@ -25,18 +25,21 @@ const SPHERES: &[Sphere] = &[
     radius: 1.,
     color: [255., 0., 0., 255.],
     specular: None,
+    reflective: None,
   },
   Sphere {
     center: Vector3::new(-2., 0., 4.),
     radius: 1.,
     color: [0., 255., 0., 255.],
     specular: None,
+    reflective: None,
   },
   Sphere {
     center: Vector3::new(2., 0., 4.),
     radius: 1.,
     color: [0., 0., 255., 255.],
     specular: None,
+    reflective: None,
   },
 ];
 
@@ -56,7 +59,7 @@ fn main() -> Result<()> {
     for y in -ch / 2..ch / 2 {
       let direction = canvas.canvas_to_viewport(x as f32, y as f32);
       let color =
-        scene.trace_ray(CAMERA_POSITION, direction, 1., f32::INFINITY);
+        scene.trace_ray(CAMERA_POSITION, direction, 1., f32::INFINITY, None);
 
       canvas.put_pixel(x as f32, y as f32, color);
     }
