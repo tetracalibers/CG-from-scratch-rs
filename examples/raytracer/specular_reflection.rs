@@ -27,24 +27,28 @@ const SPHERES: &[Sphere] = &[
     radius: 1.,
     color: [255., 0., 0., 255.],
     specular: Some(500.),
+    reflective: None,
   },
   Sphere {
     center: Vector3::new(-2., 0., 4.),
     radius: 1.,
     color: [0., 255., 0., 255.],
     specular: Some(10.),
+    reflective: None,
   },
   Sphere {
     center: Vector3::new(2., 0., 4.),
     radius: 1.,
     color: [0., 0., 255., 255.],
     specular: Some(500.),
+    reflective: None,
   },
   Sphere {
     center: Vector3::new(0., -5001., 0.),
     radius: 5000.,
     color: [255., 255., 0., 255.],
     specular: Some(1000.),
+    reflective: None,
   },
 ];
 
