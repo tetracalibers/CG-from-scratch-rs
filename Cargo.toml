@@ -27,3 +27,7 @@ path = "examples/raytracer/shadows.rs"
 [[example]]
 name = "raytracer_05_reflections"
 path = "examples/raytracer/reflections.rs"
+
+[[example]]
+name = "raytracer_06_camera_position"
+path = "examples/raytracer/camera_position.rs"
