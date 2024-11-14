@@ -80,7 +80,7 @@ impl<'a> Scene<'a> {
       //
 
       if let Some(specular) = specular {
-        let R = 2. * N * N.dot(L) - L;
+        let R = self.reflect_ray(L, N);
         let r_dot_v = R.dot(V);
 
         if r_dot_v > 0.0 {
@@ -91,6 +91,13 @@ impl<'a> Scene<'a> {
     }
 
     intensity
+  }
+
+  /// * `R` - ray
+  /// * `N` - normal
+  #[allow(non_snake_case)]
+  fn reflect_ray(&self, R: Vector3<f32>, N: Vector3<f32>) -> Vector3<f32> {
+    2. * N * N.dot(R) - R
   }
 
   /// * `O` - origin
